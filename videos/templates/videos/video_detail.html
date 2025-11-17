@@ -7,6 +7,13 @@
                 <a class="btn btn-default" href="{% url 'video_edit' pk=video.pk %}">
                     {% include './icons/pencil-fill.svg' %}
                 </a>
+                {% comment %} Ici on a besoin de spécifier l'attribut "action" car on ne va pas soumettre le formulaire à la même URL que celle de la page actuelle. {% endcomment %}
+                <form action="{% url 'video_delete' pk=video.pk %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-default" onclick="return confirm('Vraiment supprimer ?');">
+                        {% include './icons/trash.svg' %}
+                    </button>
+                </form>
             {% endif %}
         </aside>
         {% if video.published_date %}

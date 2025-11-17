@@ -1,0 +1,20 @@
+{% extends 'videos/base.html' %}
+
+{% block content %}
+    <article class="video">
+        <aside class="actions">
+            {% if user.is_authenticated %}
+                <a class="btn btn-default" href="{% url 'video_edit' pk=video.pk %}">
+                    {% include './icons/pencil-fill.svg' %}
+                </a>
+            {% endif %}
+        </aside>
+        {% if video.published_date %}
+            <time class="date">
+                {{ video.published_date }}
+            </time>
+        {% endif %}
+        <h2>{{ video.title }}</h2>
+        <p>{{ video.text|linebreaksbr }}</p>
+    </article>
+{% endblock %}

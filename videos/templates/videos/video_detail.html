@@ -16,12 +16,14 @@
                 </form>
             {% endif %}
         </aside>
-        {% if video.published_date %}
-            <time class="date">
-                {{ video.published_date }}
-            </time>
-        {% endif %}
+        <time class="date">
+            {{ video.uploaded_at }}
+        </time>
         <h2>{{ video.title }}</h2>
-        <p>{{ video.text|linebreaksbr }}</p>
+        <p>{{ video.description|linebreaksbr }}</p>
+        {% comment %} important d'ajouter controle pour permettre la lecture {% endcomment %}
+        <video controls width="720">
+            <source src="{{ video.video.url }}" type="video/mp4">
+        </video>
     </article>
 {% endblock %}

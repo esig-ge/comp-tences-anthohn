@@ -11,6 +11,7 @@
                         </time>
                         <h2><a href="{% url 'video_detail' pk=video.pk %}">{{ video.title }}</a></h2>
                         <p>{{ video.description|linebreaksbr }}</p>
+                        <img src="{{ video.thumbnail.url }}"  alt="Thumbnail for {{ video.title }}" class="img-thumbnail">
                     </article>
                 {% endfor %}
             </div>

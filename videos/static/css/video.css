@@ -68,3 +68,9 @@ h4 {
     color: #FFFFFF;
     background-color: #C25100;
 }
+
+.img-thumbnail {
+    width: 320px;
+    height: 180px;
+    object-fit: cover;
+}

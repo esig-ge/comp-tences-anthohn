@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-twkl&@tkjj#^%=$5%4%+#j%c_*a_ak*+^#e4iy)v7ro2lz7ie('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
 
@@ -80,6 +80,11 @@ DATABASES = {
     }
 }
 
+# L'URL aux fichiers ex: http://localhost:8000/media/ma_video.mp4
+MEDIA_URL = '/media/'
+
+# Le chemin physique sur l'ordinateur
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

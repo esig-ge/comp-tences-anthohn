@@ -17,7 +17,8 @@ def video_detail(request, pk):
 
 def video_new(request):
     if request.method == "POST":
-        form = VideoForm(request.POST)
+        # ajout de request.FILES pour gérer les fichiers uploadés
+        form = VideoForm(request.POST, request.FILES)
         if form.is_valid():
             video = form.save(commit=False)
             video.author = request.user
@@ -31,7 +32,8 @@ def video_new(request):
 def video_edit(request, pk):
     video = get_object_or_404(Video, pk=pk)
     if request.method == "POST":
-        form = VideoForm(request.POST, instance=video)
+        # ajout de request.FILES pour gérer les fichiers uploadés
+        form = VideoForm(request.POST, request.FILES, instance=video)
         if form.is_valid():
             # le commit=False permet d'enregister les données présentent dans le forms.py sans les sauvegarder directement en base de données et en attendant d'ajouter d'autres informations
             video = form.save(commit=False)

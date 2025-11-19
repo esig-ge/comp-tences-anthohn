@@ -1,11 +1,13 @@
 {% extends 'videos/base.html' %}
 
 {% block content %}
-    <h2>New video</h2>
+    <h2 class="text-2xl font-semibold mb-4">New video</h2>
     {% comment %} Ici pas besoin de spécifier l'attribut "action" de la balise form, car par défaut le formulaire sera soumis à la même URL que celle de la page actuelle. {% endcomment %}
-    <form method="POST" enctype="multipart/form-data" class="video-form">
+    <form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-md shadow-sm">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="save btn btn-default">Save</button>
+        <div class="mt-4">
+            <button type="submit" class="save px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Save</button>
+        </div>
     </form>
 {% endblock %}

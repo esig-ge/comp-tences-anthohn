@@ -1,20 +1,18 @@
 {% extends 'videos/base.html' %}
 
 {% block content %}
-    <main class="container">
-        <div class="row">
-            <div class="col">
-                {% for video in videos %}
-                    <article class="video">
-                        <time class="date">
-                            {{ video.uploaded_at }}
-                        </time>
-                        <h2><a href="{% url 'video_detail' pk=video.pk %}">{{ video.title }}</a></h2>
-                        <p>{{ video.description|linebreaksbr }}</p>
-                        <img src="{{ video.thumbnail.url }}"  alt="Thumbnail for {{ video.title }}" class="img-thumbnail">
-                    </article>
-                {% endfor %}
-            </div>
+    <main class="mx-auto max-w-4xl px-4">
+        <div class="grid grid-cols-3 gap-6">
+            {% for video in videos %}
+                <div class="video border rounded-lg p-4 shadow-sm bg-white">
+                    <div class="date text-sm text-gray-500">
+                        {{ video.uploaded_at }}
+                    </div>
+                    <h2 class="mt-2 text-xl font-semibold"><a class="text-blue-600 hover:underline" href="{% url 'video_detail' pk=video.pk %}">{{ video.title }}</a></h2>
+                    <p class="mt-2 text-gray-700">{{ video.description|linebreaksbr }}</p>
+                    <img src="{{ video.thumbnail.url }}"  alt="Thumbnail for {{ video.title }}" class="mt-3 rounded-md shadow-sm w-full object-cover">
+                </div>
+            {% endfor %}
         </div>
     </main>
 {% endblock %}

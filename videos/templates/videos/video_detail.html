@@ -2,6 +2,12 @@
 
 {% block content %}
     <article class="video bg-white rounded-lg shadow-sm p-4">
+        {% comment %} important d'ajouter controle pour permettre la lecture {% endcomment %}
+        <div class="mt-4">
+            <video controls class="w-full max-w-3xl">
+                <source src="{{ video.video.url }}" type="video/mp4">
+            </video>
+        </div>
         <div class="flex items-start justify-between">
             <div>
                 <time class="date text-sm text-gray-500">{{ video.uploaded_at }}</time>
@@ -23,11 +29,5 @@
             </aside>
         </div>
         <p class="mt-4 text-gray-700">{{ video.description|linebreaksbr }}</p>
-        {% comment %} important d'ajouter controle pour permettre la lecture {% endcomment %}
-        <div class="mt-4">
-            <video controls class="w-full max-w-3xl">
-                <source src="{{ video.video.url }}" type="video/mp4">
-            </video>
-        </div>
     </article>
 {% endblock %}

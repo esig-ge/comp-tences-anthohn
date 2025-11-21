@@ -7,6 +7,7 @@
     soumis à la même URL que celle de la page actuelle. {% endcomment %}
     <form method="POST" enctype="multipart/form-data" class="video-form">
         {% csrf_token %}
+        {% comment %} ici as_p sert à rendre le formulaire sous forme de paragraphes {% endcomment %}
         {{ form.as_p }}
         <div class="form-actions">
             <button type="submit" class="btn btn-save">Save</button>

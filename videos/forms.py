@@ -8,3 +8,9 @@ class VideoForm(forms.ModelForm):
     class Meta:
         model = Video
         fields = ('title', 'description', 'video', 'thumbnail',)
+        labels = {
+            'title': 'Titre de la vidéo',
+            'description': 'Description de la vidéo',
+            'video': 'Fichier vidéo',
+            'thumbnail': 'Image miniature',
+        }

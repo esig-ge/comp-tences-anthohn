@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="edit-video-container">
-    <h2 class="page-title">New video</h2>
+    <h2 class="page-title">Vidéo</h2>
     {% comment %} Ici pas besoin de spécifier l'attribut "action" de la balise form, car par défaut le formulaire sera
     soumis à la même URL que celle de la page actuelle. {% endcomment %}
     <form method="POST" enctype="multipart/form-data" class="video-form">
@@ -10,7 +10,7 @@
         {% comment %} ici as_p sert à rendre le formulaire sous forme de paragraphes {% endcomment %}
         {{ form.as_p }}
         <div class="form-actions">
-            <button type="submit" class="btn btn-save">Save</button>
+            <button type="submit" class="btn btn-save">Sauvegarder</button>
         </div>
     </form>
 </div>

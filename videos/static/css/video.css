@@ -132,17 +132,18 @@ ul {
 }
 
 .btn-save {
-    background-color: #CC0000;
+    background-color: #39b400;
     color: white;
     border: none;
     border-radius: 2px;
     padding: 10px 24px;
     text-transform: uppercase;
     font-weight: bold;
+    border-radius: 10px;
 }
 
 .btn-save:hover {
-    background-color: #990000;
+    background-color: #2b8800;
 }
 
 .btn-icon {

@@ -17,9 +17,12 @@ def validate_thumbnail_size(value):
 
 # Create your models here.
 class Video(models.Model):
+    # Si message erreur front & back, blank=False
     title = models.CharField(max_length=50)
     # https://www.geeksforgeeks.org/python/what-is-the-max-size-of-max-length-in-django/
-     # No need for max_length
+    # No need for max_length
+    # blank=True allows the description to be optional
+    # blank=False makes the field required
     description = models.TextField()
     # fichier stocké dans le dossier "videos/"
     video = models.FileField(

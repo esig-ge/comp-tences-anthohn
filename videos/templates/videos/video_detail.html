@@ -2,7 +2,7 @@
 
 {% block content %}
 <article class="video-detail-container">
-    {% comment %} important d'ajouter controle pour permettre la lecture {% endcomment %}
+    <!-- important d'ajouter controle pour permettre la lecture -->
     <div class="video-player-wrapper">
         <video controls class="video-player">
             <source src="{{ video.video.url }}" type="video/mp4">
@@ -12,14 +12,15 @@
         <div class="video-title-section">
             <time class="video-date">{{ video.uploaded_at }}</time>
             <h1 class="video-title-large">{{ video.title }}</h1>
+            <p>{{ video.description }}</p>
         </div>
         <aside class="video-actions">
             {% if user.is_authenticated %}
             <a class="btn-icon btn-edit" href="{% url 'video_edit' pk=video.pk %}">
                 {% include './icons/pencil-fill.svg' %}
             </a>
-            {% comment %} Ici on a besoin de spécifier l'attribut "action" car on ne va pas soumettre le formulaire à la
-            même URL que celle de la page actuelle. {% endcomment %}
+            <!-- Ici on a besoin de spécifier l'attribut "action" car on ne va pas soumettre le formulaire à la
+            même URL que celle de la page actuelle. -->
             <form action="{% url 'video_delete' pk=video.pk %}" method="POST" class="inline-form">
                 {% csrf_token %}
                 <button type="submit" class="btn-icon btn-delete" onclick="return confirm('Vraiment supprimer ?');">

@@ -23,6 +23,9 @@ class Video(models.Model):
     # No need for max_length
     # blank=True allows the description to be optional
     # blank=False makes the field required
+    # # # # # # # # # # # # # # # # #  # # 
+    # par défaut, les champs sont obligatoire
+    # # # # # # # # # # # # # # # # #  # # 
     description = models.TextField()
     # fichier stocké dans le dossier "videos/"
     video = models.FileField(

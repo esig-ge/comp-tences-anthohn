@@ -1,9 +1,8 @@
 from django.utils import timezone
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Video
-from django.shortcuts import render, get_object_or_404
 from .forms import VideoForm
-from django.shortcuts import redirect
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -60,3 +59,13 @@ def video_delete(request, pk):
     # Si la requête n'est pas de type POST, redirige vers la liste des vidéos
     # Si quelqu'un essaie d'accéder directement à cette vue via GET, on ne supprime pas la vidéo et on redirige simplement
     return redirect('video_list')
+
+def search_videos(request):
+    query = request.GET.get('q', '')
+    if query:
+        # Recherche insensible à la casse (icontains)
+        videos = Video.objects.filter(title__icontains=query)[:5]
+        results = [{'id': video.id, 'title': video.title} for video in videos]
+    else:
+        results = []
+    return JsonResponse(results, safe=False)

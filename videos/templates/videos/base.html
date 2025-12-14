@@ -56,22 +56,23 @@
             const searchInput = document.getElementById('search-input');
             const resultsContainer = document.getElementById('search-results');
 
-            // Écoute de l'événement "input"
+            // addEventListener écoute de l'événement "input"
+            // Input est l'élément déclencheur de l'événement
+            // function (event) est le callback, à chaque fois que "input" est déclenché, la fonction event est appelée
             searchInput.addEventListener("input", function (event) {
                 const query = event.target.value;
 
-                // 1. Gestion du cas "champ vide"
-                if (query.length === 0) {
+                // Gestion champ vide
+                if (query.length > 0) {
+                    // Appel AJAX
+                    makeAjaxRequest("GET", `{% url 'search_videos' %}?q=${query}`, function (response) {
+                        updateDOM(response);
+                    });
+                }
+                else {
                     resultsContainer.style.display = 'none';
                     resultsContainer.innerHTML = '';
-                    return;
                 }
-
-                // 3. Appel AJAX
-                makeAjaxRequest("GET", `{% url 'search_videos' %}?q=${query}`, function (response) {
-                    // Ceci est la fonction de rappel (Callback) anonyme
-                    updateDOM(response);
-                });
             });
 
         });

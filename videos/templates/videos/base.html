@@ -50,30 +50,81 @@
         </div>
     </main>
     <script>
-        var gestionnaireRecherche = function (evenement) {
-            // utiliser plutot la route (url) de la view search_videos
-            fetch(`{% url 'search_videos' %}?q=${searchInput.value}`)
-                .then(response => response.json()) // Convertit la réponse en JSON
-                .then(data => {
-                    // Vider les anciens résultats
-                    resultsContainer.innerHTML = '';
-                    // Afficher la boîte de résultats
-                    resultsContainer.style.display = 'block';
+        // On attend que le HTML soit chargé
+        document.addEventListener("DOMContentLoaded", function () {
 
-                    // Pour chaque vidéo trouvée...
-                    data.forEach(video => {
-                        // Créer un lien HTML simple
-                        const lienVideo = `<a href="/video/${video.id}/" class="search-result-item">${video.title}</a>`;
-                        // Ajouter ce lien dans la boîte de résultats
-                        resultsContainer.innerHTML += lienVideo;
-                    });
+            const searchInput = document.getElementById('search-input');
+            const resultsContainer = document.getElementById('search-results');
+
+            // Écoute de l'événement "input"
+            searchInput.addEventListener("input", function (event) {
+                const query = event.target.value;
+
+                // 1. Gestion du cas "champ vide"
+                if (query.length === 0) {
+                    resultsContainer.style.display = 'none';
+                    resultsContainer.innerHTML = '';
+                    return;
+                }
+
+                // 3. Appel AJAX
+                makeAjaxRequest("GET", `{% url 'search_videos' %}?q=${query}`, function (response) {
+                    // Ceci est la fonction de rappel (Callback) anonyme
+                    updateDOM(response);
                 });
+            });
+
+        });
+
+        function makeAjaxRequest(method, url, callback) {
+            // Ici faire en xhr plutot que en avec fetch pour pouvoir démontrer Synchrone et Asynchrone
+            const xhr = new XMLHttpRequest();
+            // true = Asynchrone (Normal, fluide)
+            // false = Synchrone (Bloque la page -> Pour ta démo)
+            xhr.open(method, url, true);
+
+            xhr.onreadystatechange = function () {
+                // readyState 4 = Terminé
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        const json = JSON.parse(xhr.responseText);
+                        callback(json); // Exécution du callback reçu en paramètre
+                    } else {
+                        console.error("Erreur AJAX :", xhr.status);
+                    }
+                }
+            };
+            // Envoi de la requête en null car c'est du GET et donc pas de corps de message
+            // GET (La carte postale) La fonction xhr.send() sert à remplir l'intérieur de l'enveloppe. Comme c'est une carte postale (GET), il n'y a pas d'intérieur.
+            // POST (La lettre scellée) La méthode POST sert à envoyer de l'information (créer un compte, uploader une vidéo). C'est comme une lettre dans une enveloppe.
+            xhr.send(null);
         }
-        //Sélectionner les éléments HTML dont on a besoin
-        const searchInput = document.getElementById('search-input');
-        const resultsContainer = document.getElementById('search-results');
-        //Ecouter l'événement "input" (quand l'utilisateur tape quelque chose)
-        searchInput.addEventListener("input", gestionnaireRecherche);
+
+        function updateDOM(videos) {
+            const resultsContainer = document.getElementById('search-results');
+
+            // On vide proprement
+            resultsContainer.innerHTML = '';
+            resultsContainer.style.display = 'block';
+
+            // Boucle sur les résultats
+            videos.forEach(function (video) {
+                // Changement de innerHTML += à des createElement en jouant avec les noeuds
+                // https://developer.mozilla.org/fr/docs/Web/API/Document/createElement
+
+                // 1. Création du lien <a> parent
+                const lien = document.createElement("a");
+                lien.href = `/video/${video.id}/`;
+                lien.classList.add("search-result-item");
+
+                // création enfant
+                const texte = document.createTextNode(video.title);
+
+                // assemblage parent et enfant
+                lien.appendChild(texte); // Le texte va dans le lien
+                resultsContainer.appendChild(lien); // Le lien va dans le conteneur
+            });
+        }
     </script>
 </body>
 

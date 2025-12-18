@@ -51,20 +51,44 @@
     </main>
     <script>
         // On attend que le HTML soit chargé
+        // Il ilt le Html et convert en DOM
+        // Ensuite il peut manipuler le DOM
+        // premier argument : l'événement à écouter
+        // 
+        //
+        // je déclare une fonction anonyme (sans nom) qui sera exécutée lorsque l'événement "DOMContentLoaded" sera déclenché
+        //
+        // second argument : le callback, la fonction anonyme à exécuter lorsque l'événement est déclenché
+        //
         document.addEventListener("DOMContentLoaded", function () {
 
+            // Récupération des éléments du DOM dans des constantes
             const searchInput = document.getElementById('search-input');
             const resultsContainer = document.getElementById('search-results');
 
             // addEventListener écoute de l'événement "input"
             // Input est l'élément déclencheur de l'événement
             // function (event) est le callback, à chaque fois que "input" est déclenché, la fonction event est appelée
+            //
+            // je déclare une fonction anonyme (sans nom) qui sera exécutée lorsque l'événement "input" sera déclenché sur l'élément searchInput
+            // en lui passant en paramètr l l'objet event qui contient des informations sur l'événement déclenché
+            //
+            // Le paramètre event (ou parfois e) est un objet automatiquement créé par le navigateur 
+            // qui contient plein d'informations sur ce qui vient de se passer.
+            // 
+            // event est un objet qui contient des informations sur l'événement déclenché.
+            //
             searchInput.addEventListener("input", function (event) {
+               // Récupère la valeur actuelle du champ de recherche
+
+                // target designe l'élément qui a déclenché l'événement
+                // value est la valeur actuelle de ce champ
                 const query = event.target.value;
 
                 // Gestion champ vide
                 if (query.length > 0) {
-                    // Appel AJAX
+                    // Appel AJAX avec passage en paramètre 
+                    // Je lui passes une fonction anonyme (callback) qui sera exécutée lorsque la réponse AJAX sera reçue
                     makeAjaxRequest("GET", `{% url 'search_videos' %}?q=${query}`, function (response) {
                         updateDOM(response);
                     });
@@ -74,7 +98,6 @@
                     resultsContainer.innerHTML = '';
                 }
             });
-
         });
 
         function makeAjaxRequest(method, url, callback) {
@@ -82,14 +105,16 @@
             const xhr = new XMLHttpRequest();
             // true = Asynchrone (Normal, fluide)
             // false = Synchrone (Bloque la page -> Pour ta démo)
-            xhr.open(method, url, true);
+            xhr.open(method, url, false);
 
             xhr.onreadystatechange = function () {
                 // readyState 4 = Terminé
                 if (xhr.readyState === 4) {
+                    // Statut 200 = OK
                     if (xhr.status === 200) {
+                        // Parse la réponse JSON en objet JS
                         const json = JSON.parse(xhr.responseText);
-                        callback(json); // Exécution du callback reçu en paramètre
+                        callback(json); // Exécution du callback reçu en paramètre <--- Le biper sonne ici !
                     } else {
                         console.error("Erreur AJAX :", xhr.status);
                     }
@@ -109,6 +134,8 @@
             resultsContainer.style.display = 'block';
 
             // Boucle sur les résultats
+            // je donne à foreach une fonction anonyme (callback)
+            // qui sera exécutée pour chaque élément du tableau videos
             videos.forEach(function (video) {
                 // Changement de innerHTML += à des createElement en jouant avec les noeuds
                 // https://developer.mozilla.org/fr/docs/Web/API/Document/createElement

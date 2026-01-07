@@ -1,8 +1,15 @@
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from .models import Video
 from .forms import VideoForm
 from django.http import JsonResponse
+import os
+import time
+import google.generativeai as genai
+
+api_key = os.getenv("GOOGLE_API_KEY")
+genai.configure(api_key=api_key)
 
 
 # Create your views here.
@@ -69,3 +76,53 @@ def search_videos(request):
     else:
         results = []
     return JsonResponse(results, safe=False)
+
+from django.contrib import messages     # Ajouter cet import en haut du fichier si pas déjà présent (je le ferai dans un autre bloc si besoin, mais ici je modifie generate_summary)
+
+def generate_summary(request, pk):
+    """
+    Vue pour générer un résumé automatique de la vidéo via Gemini.
+    Utilise gemini-flash-latest pour un meilleur équilibre vitesse/quota.
+    """
+    video_instance = get_object_or_404(Video, pk=pk)
+
+    try:
+        # 1. Upload du fichier vers l'API Gemini
+        print(f"Début de l'upload pour : {video_instance.title}")
+        video_file = genai.upload_file(path=video_instance.video.path)
+
+        # 2. Attente de la fin du traitement
+        while video_file.state.name == "PROCESSING":
+            print("Traitement de la vidéo par l'IA en cours...")
+            time.sleep(5)
+            video_file = genai.get_file(video_file.name)
+
+        if video_file.state.name == "FAILED":
+            raise Exception("L'indexation de la vidéo a échoué sur les serveurs Gemini.")
+
+        # 3. Initialisation du modèle
+        # On utilise gemini-flash-latest qui est souvent plus permissif sur les quotas free-tier
+        model = genai.GenerativeModel(model_name="gemini-flash-latest")
+        prompt = (
+            "Analyse cette vidéo et fais-en un résumé structuré en français. "
+            "Identifie le sujet principal et les points clés abordés. "
+            "Sois concis."
+        )
+
+        # Génération du contenu
+        response = model.generate_content([video_file, prompt])
+
+        # 4. Sauvegarde
+        video_instance.summary = response.text
+        video_instance.save()
+        messages.success(request, "Résumé généré avec succès !")
+        print("Résumé généré et sauvegardé avec succès.")
+
+    except Exception as e:
+        error_msg = f"Erreur lors de la génération : {str(e)}"
+        print(error_msg)
+        # Affiche un message d'erreur à l'utilisateur
+        messages.error(request, "Une erreur est survenue lors de la génération du résumé. Vérifiez les quotas ou réessayez plus tard.")
+
+    # 5. Redirection
+    return redirect('video_detail', pk=pk)

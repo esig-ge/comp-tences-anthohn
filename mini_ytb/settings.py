@@ -12,6 +12,15 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+import os
+from dotenv import load_dotenv
+
+# Charge les variables du fichier .env
+load_dotenv()
+
+# Tu peux maintenant récupérer ta clé
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

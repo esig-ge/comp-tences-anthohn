@@ -89,6 +89,7 @@
                 if (query.length > 0) {
                     // Appel AJAX avec passage en paramètre 
                     // Je lui passes une fonction anonyme (callback) qui sera exécutée lorsque la réponse AJAX sera reçue
+                    // Quand updateDOM aura fini de parler au serveur, appelle cette fonction et mets ce que tu as reçu dans la variable que j'ai nommée response
                     makeAjaxRequest("GET", `{% url 'search_videos' %}?q=${query}`, function (response) {
                         updateDOM(response);
                     });
@@ -103,10 +104,14 @@
         function makeAjaxRequest(method, url, callback) {
             // Ici faire en xhr plutot que en avec fetch pour pouvoir démontrer Synchrone et Asynchrone
             const xhr = new XMLHttpRequest();
+
             // true = Asynchrone (Normal, fluide)
             // false = Synchrone (Bloque la page -> Pour ta démo)
-            xhr.open(method, url, false);
+            // Préparation de la requête
+            xhr.open(method, url, true);
 
+            // onreadystatechange est un événement qui se déclenche à chaque changement d'état de la requête AJAX
+            // dans notre cas il se déclanche lorsque la requête est terminée
             xhr.onreadystatechange = function () {
                 // readyState 4 = Terminé
                 if (xhr.readyState === 4) {

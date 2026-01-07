@@ -44,3 +44,5 @@ class Video(models.Model):
         ]
     )
     uploaded_at = models.DateTimeField(default=timezone.now)
+
+    summary = models.TextField(blank=True, null=True)

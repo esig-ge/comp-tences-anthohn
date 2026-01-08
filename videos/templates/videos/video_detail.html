@@ -19,16 +19,20 @@
 
             <div class="video-summary-section">
                 {% if video.summary %}
-                <details>
+                <!-- open sert à ouvrir le résumé par défaut -->
+                <details open>
                     <summary>Résumé de la vidéo (IA)</summary>
                     <div class="summary-content">
                         {{ video.summary|markdown }}
                     </div>
                 </details>
                 {% else %}
-                <a href="{% url 'generate_summary' pk=video.pk %}" class="btn-generate-summary">
-                    ✨ Générer le résumé avec l'IA
-                </a>
+                <div class="summary-empty-state">
+                    <p>Aucun résumé disponible pour le moment.</p>
+                    <a href="{% url 'generate_summary' pk=video.pk %}" class="btn-generate-summary">
+                        Générer le résumé maintenant
+                    </a>
+                </div>
                 {% endif %}
             </div>
         </div>

@@ -5,6 +5,10 @@ from .forms import VideoForm
 from django.http import JsonResponse
 
 
+# FIXE 
+from datetime import timedelta
+from django.core.exceptions import PermissionDenied
+
 # Create your views here.
 def video_list(request):
     videos = Video.objects.filter(uploaded_at__lte=timezone.now()).order_by('uploaded_at')
@@ -16,6 +20,17 @@ def video_detail(request, pk):
 
 def video_new(request):
     if request.method == "POST":
+
+        ######### FIXE : pour empêcher le spam #########
+        dix_min_ago = timezone.now() - timedelta(minutes=10)
+        user_uploads = Video.objects.filter(author=request.user, uploaded_at__gte=dix_min_ago).count()
+
+        if user_uploads >= 3:
+            # retourne une erreur 403
+            raise PermissionDenied("Alerte Spam : Trop d'uploads en peu de temps.")
+        ################################################
+
+
         # ajout de request.FILES pour gérer les fichiers uploadés
         form = VideoForm(request.POST, request.FILES)
         if form.is_valid():
@@ -53,6 +68,14 @@ def video_delete(request, pk):
     
     # Passe par ici uniquement si la requête est de type POST
     if request.method == "POST":
+
+        ######### FIXE : pour supprimer le fichier vidéo et le fichier de miniature #########
+        if video.video:
+            video.video.delete(save=False) # Supprime le MP4
+        if video.thumbnail:
+            video.thumbnail.delete(save=False) # Supprime le JPG/PNG
+        ################################################
+
         video.delete()
         return redirect('video_list')
     

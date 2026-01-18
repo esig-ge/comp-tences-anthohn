@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 # Fonction de validation pour la taille du fichier, taille max : 100 Mo
 def validate_video_size(value):
@@ -44,3 +45,4 @@ class Video(models.Model):
         ]
     )
     uploaded_at = models.DateTimeField(default=timezone.now)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)

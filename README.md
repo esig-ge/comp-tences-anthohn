@@ -8,5 +8,5 @@ cd comp-tences-anthohn
 ````
 3. Run the development server :
 ````
-py manage.py runserver
+py manage.py runserver 
 ````

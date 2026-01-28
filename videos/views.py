@@ -4,38 +4,52 @@ from django.contrib import messages
 from .models import Video
 from .forms import VideoForm
 from django.http import JsonResponse
+# os permet de récupérer des variables d'environnement
 import os
+# time permet de gérer des délais
 import time
-import google.generativeai as genai
+# google.genai is the new official SDK
+from google import genai
+# messages permet d'afficher des messages dans la page
 from django.contrib import messages
 
 api_key = os.getenv("GOOGLE_API_KEY")
-genai.configure(api_key=api_key)
-
 
 # Create your views here.
 def process_video_summary(video_instance):
+    """
+    Fonction utilitaire pour générer le résumé via Gemini (SDK google-genai).
+    """
+    client = genai.Client(api_key=api_key)
 
-    video_file = genai.upload_file(path=video_instance.video.path)
+    print(f"Début de l'upload pour : {video_instance.title}")
+
+    # Upload de la vidéo via le nouveau SDK
+    # on utilise l'argument 'file' pour le chemin du fichier
+    video_file = client.files.upload(file=video_instance.video.path)
 
     # Attente de la fin du traitement
     while video_file.state.name == "PROCESSING":
         time.sleep(5)
-        video_file = genai.get_file(video_file.name)
+        # On rafraîchit l'objet fichier
+        video_file = client.files.get(name=video_file.name)
 
     if video_file.state.name == "FAILED":
         raise Exception("L'indexation de la vidéo a échoué sur les serveurs Gemini.")
 
-    # Initialisation du modèle
-    model = genai.GenerativeModel(model_name="gemini-flash-latest")
+    # Prompt pour Gemini Flash
     prompt = (
         "Analyse cette vidéo et fais-en un résumé structuré en français. "
         "Identifie le sujet principal et les points clés abordés. "
         "Sois concis."
     )
 
-    # Génération du contenu
-    response = model.generate_content([video_file, prompt])
+    # Génération du contenu avec le nouveau client
+    # On utilise "gemini-1.5-flash" qui est le nom standard actuel
+    response = client.models.generate_content(
+        model="gemini-1.5-flash",
+        contents=[video_file, prompt]
+    )
 
     # Sauvegarde
     video_instance.summary = response.text
@@ -59,10 +73,14 @@ def video_new(request):
             video.published_date = timezone.now()
             video.save()
 
+            # Génération automatique du résumé après l'upload de la vidéo
             try:
+                # appel de la fonction process_video_summary
                 process_video_summary(video)
+                # message de succès
                 messages.success(request, "Vidéo ajoutée et résumé généré avec succès !")
             except Exception as e:
+                # message d'erreur
                 messages.warning(request, "Vidéo ajoutée, mais le résumé n'a pas pu être généré automatiquement. Vous pouvez réessayer depuis la page de détails.")
 
             return redirect('video_detail', pk=video.pk)

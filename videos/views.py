@@ -22,9 +22,12 @@ def video_new(request):
     if request.method == "POST":
 
         ######### FIXE : pour empêcher le spam #########
+        # timezone.now sert à obtenir la date et l'heure actuelles et timedelta sert à obtenir la date et l'heure actuelles moins 10 minutes
         dix_min_ago = timezone.now() - timedelta(minutes=10)
+        # Video.objects.filter sert à obtenir toutes les vidéos qui ont été uploadées par l'utilisateur et qui ont été uploadées il y a moins de 10 minutes
         user_uploads = Video.objects.filter(author=request.user, uploaded_at__gte=dix_min_ago).count()
 
+        # Si l'utilisateur a uploadé 3 vidéos ou plus il y a moins de 10 minutes, on retourne une erreur 403
         if user_uploads >= 3:
             # retourne une erreur 403
             raise PermissionDenied("Alerte Spam : Trop d'uploads en peu de temps.")
@@ -70,8 +73,14 @@ def video_delete(request, pk):
     if request.method == "POST":
 
         ######### FIXE : pour supprimer le fichier vidéo et le fichier de miniature #########
+        # Sans se fixe, le fichier vidéo et le fichier de miniature ne sont pas supprimés 
+        # Sans save=False : Django ferait 3 requêtes à la base de données (Update vidéo, Update miniature, puis Delete de la ligne). C'est inutile de mettre à jour une ligne que tu vas supprimer la seconde d'après !
+        # Avec save=False : Django supprime les fichiers sur le disque,
+        # mais ne perd pas de temps à modifier la base de données.
+        # Il attend le video.delete() final pour tout nettoyer d'un coup.
         if video.video:
             video.video.delete(save=False) # Supprime le MP4
+            
         if video.thumbnail:
             video.thumbnail.delete(save=False) # Supprime le JPG/PNG
         ################################################
